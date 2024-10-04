@@ -1,3 +1,5 @@
+![alt text](https://github.com/layer8secure/extron-smp-inject/blob/main/extron_inject.jpg?raw=true)
+
 # Extron SMP OS Command Injection
 
 By Ryan Roth [@f1rstm4tter](https://twitter.com/f1rstm4tter)
