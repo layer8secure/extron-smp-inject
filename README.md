@@ -14,7 +14,6 @@ This tool exploits OS command injection vulnerabilities in Extron SMP devices. I
 - [Arguments](#arguments)
 - [Examples](#examples)
 - [Logging](#logging)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Installation
