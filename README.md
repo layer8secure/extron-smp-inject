@@ -1,13 +1,13 @@
 ![alt text](https://github.com/layer8secure/extron-smp-inject/blob/main/extron_inject.png?raw=true)
 
-# Extron SMP OS Command Injection
+# CVE-2024-50960: Extron SMP OS Command Injection
 
 By Ryan Roth [@f1rstm4tter](https://twitter.com/f1rstm4tter)
 [www.layer8security.com](http://www.layer8security.com)
 
 ## Overview
 
-This tool exploits OS command injection vulnerabilities in Extron SMP devices. It allows users to execute arbitrary commands and spawn shells (both bind and reverse) on the target system.
+This tool exploits CVE-2024-50960 — OS command injection vulnerabilities in Extron SMP devices. It allows users to execute arbitrary commands and spawn shells (both bind and reverse) on the target system.
 
 ## Table of Contents
 
