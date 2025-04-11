@@ -9,7 +9,7 @@ Advisory: [CVE-2024-50960: Exploiting Extron SMP Command Injection](https://ryan
 
 ## Overview
 
-This tool exploits [CVE-2024-50960](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-50960) — OS command injection vulnerabilities in Extron SMP devices. It allows users to execute arbitrary commands and spawn shells (both bind and reverse) on the target system.
+This tool exploits [CVE-2024-50960](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-50960) — OS command injection vulnerabilities in Extron SMP devices. It allows web admins to execute arbitrary commands and spawn shells (both bind and reverse) on the underlying OS.
 
 ## Table of Contents
 
