@@ -5,6 +5,8 @@
 By Ryan Roth [@f1rstm4tter](https://twitter.com/f1rstm4tter)
 [www.layer8security.com](http://www.layer8security.com)
 
+Advisory: [CVE-2024-50960: Exploiting Extron SMP Command Injection](https://ryanmroth.com/articles/exploiting-extron-smp-command-injection)
+
 ## Overview
 
 This tool exploits [CVE-2024-50960](https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2024-50960) — OS command injection vulnerabilities in Extron SMP devices. It allows users to execute arbitrary commands and spawn shells (both bind and reverse) on the target system.
