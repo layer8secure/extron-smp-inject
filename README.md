@@ -16,6 +16,8 @@ This tool exploits [CVE-2024-50960](https://cve.mitre.org/cgi-bin/cvename.cgi?na
 Further analysis has revealed that the [Extron SME 211](https://www.extron.com/product/sme211)
 (firmware ≤ 3.02) is also vulnerable to CVE-2024-50960.
 
+The advisory at the link above has been updated to reflect this finding.
+
 ## Table of Contents
 
 - [Installation](#installation)
